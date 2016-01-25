@@ -6,7 +6,7 @@
     </div>
     <div class="main">
       <div class="lot">
-        <div class="lot-wrap" :class="{ animating: 'animating' }">
+        <div class="lot-wrap">
           <div class="lot-box user" v-el:lotleft>
             <div track-by="$index" v-for="user in allusers" class="lot-item">
               <div class="lot-item-text">{{user}}</div>
@@ -70,12 +70,10 @@ export default {
       r2: {},
       res: [],
       ls: ls,
-      animating: false,
-      duration: 400,
+      duration: 300,
       itemH: 146,
       total: 0,
-      debug: false,
-      timer: []
+      debug: false
     }
   },
   computed: {
@@ -95,9 +93,10 @@ export default {
       for (let key in data) {
         this.$set(key, data[key])
       }
-      this.total = this.allusers.length
-      this.allgifts.unshift('XXX')
-      this.allusers.unshift('XXX')
+      if (this.allusers.indexOf('XXX') < 0) {
+        this.allgifts.unshift('XXX')
+        this.allusers.unshift('XXX')
+      }
       this.roundEnd = true
       this.timer = []
     },
@@ -126,53 +125,23 @@ export default {
     },
     start() {
       let self = this
-      if (self.res.length == self.total || !self.roundEnd) return
+      if (self.round == 2 || !self.roundEnd) return
       self.roundEnd = false
       if (self.tmpUsers.length == 0) {
         self.tmpUsers = self.genArr(self.users)
         self.tmpGifts = self.genArr(self.gifts)
       }
-      let round = 'r' + self.round
-      let u = self.tmpUsers.slice()
-      let g = self.tmpGifts.slice()
-      let len = u.length
-      for (let i = 0; i < len; i++) {
-        self.delayAni(u, g, round, i)
+      self.animate()
+    },
+    animate() {
+      let self = this
+      let res = { u: self.tmpUsers[0], g: self.tmpGifts[0] }
+      self.updateLot('allusers', self.tmpUsers[0])
+      self.updateLot('allgifts', self.tmpGifts[0])
+      if (self.tmpUsers.length == 0) {
+        self.roundEnd = true
+        self.round++
       }
-    },
-    updateLot(tar, text) {
-      let self = this
-      let tmp = self[tar]
-      tmp.pop()
-      tmp.push(text)
-      self.$set(tar, tmp)
-    },
-    delayAni(u, g, round, i) {
-      let self = this;
-      let t = setTimeout(function() {
-        self.updateLot('allusers', u[i])
-        self.updateLot('allgifts', g[i])
-        self.ani(function() {
-          let res = { u: u[i], g: g[i] }
-          let uIndex = self.tmpUsers.indexOf(u[i])
-          let gIndex = self.tmpGifts.indexOf(g[i])
-          self.res.push(res)
-          self.tmpUsers.splice(uIndex, 1)
-          self.tmpGifts.splice(gIndex, 1)
-          self.amount[g[i]]--
-          self.updateLS()
-          if (self.tmpUsers.length == 0) {
-            self.roundEnd = true
-            self.round++
-          }
-          clearTimeout(self.timer[i])
-        })
-      }, i*(self.duration+1000))
-    },
-    ani(cb) {
-      let self = this
-      if (self.animating) return
-      self.animating = true
       Velocity(self.$els.lotleft, {translateY: 0}, {duration: 0})
       Velocity(self.$els.lotright, {translateY: 0}, {duration: 0})
       Velocity(self.$els.lotleft, {
@@ -183,14 +152,28 @@ export default {
       Velocity(self.$els.lotright, {
         translateY: -self.itemH*(self.total) 
       }, {
-        duration: self.duration+200,
+        duration: self.duration + 100,
         complete() {
-          if (typeof cb === 'function') {
-            setTimeout(function() { cb() }, 200)
+          self.tmpUsers.splice(0, 1)
+          self.tmpGifts.splice(0, 1)
+          self.res.push(res)
+          self.amount[res.g]--
+          self.updateLS()
+          if (self.tmpUsers.length == 0) {
+            self.round++
+            self.roundEnd = true
+            return
           }
-          self.animating = false
+          setTimeout(function() { self.animate() }, 400)
         }
       })
+    },
+    updateLot(tar, text) {
+      let self = this
+      let tmp = self[tar]
+      tmp.pop()
+      tmp.push(text)
+      self.$set(tar, tmp)
     },
     handleResChange() {
       this.$els.res.scrollTop = this.$els.res.scrollHeight
@@ -238,8 +221,6 @@ body
   height: 148px
   overflow: hidden
   background: #f04c71
-  &.animating
-    text-shadow: 0 0 50px #ccc
 
 .lot-start
   width: 68px
