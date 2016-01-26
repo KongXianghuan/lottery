@@ -1,9 +1,6 @@
 <template>
   <div id="app">
-    <div class="header">
-      <div class="header-inner">
-      </div>
-    </div>
+    <navtop></navtop>
     <div class="main">
       <div class="lot">
         <div class="lot-wrap">
@@ -41,6 +38,7 @@
 import store from '../lib/store'
 import ls from '../mock/data'
 import Velocity from 'velocity-animate'
+import Navtop from './Navtop'
 
 export default {
   route: {
@@ -66,8 +64,6 @@ export default {
       round: 0,
       roundAll: 2,
       roundEnd: true,
-      r1: {},
-      r2: {},
       res: [],
       ls: ls,
       duration: 300,
@@ -82,6 +78,9 @@ export default {
         ? this.total - Math.ceil(this.total/this.roundAll)*(this.roundAll-1)
         : Math.ceil(this.total/this.roundAll)
     }
+  },
+  components: {
+    Navtop
   },
   methods: {
     resetData() {
@@ -125,7 +124,7 @@ export default {
     },
     start() {
       let self = this
-      if (self.round == 2 || !self.roundEnd) return
+      if (self.round == 2 || !self.roundEnd || (self.users.length == 0 && self.tmpUsers.length == 0)) return
       self.roundEnd = false
       if (self.tmpUsers.length == 0) {
         self.tmpUsers = self.genArr(self.users)
@@ -138,10 +137,6 @@ export default {
       let res = { u: self.tmpUsers[0], g: self.tmpGifts[0] }
       self.updateLot('allusers', self.tmpUsers[0])
       self.updateLot('allgifts', self.tmpGifts[0])
-      if (self.tmpUsers.length == 0) {
-        self.roundEnd = true
-        self.round++
-      }
       Velocity(self.$els.lotleft, {translateY: 0}, {duration: 0})
       Velocity(self.$els.lotright, {translateY: 0}, {duration: 0})
       Velocity(self.$els.lotleft, {
@@ -181,7 +176,9 @@ export default {
     handleRoundEnd() {
       if (this.round == 0) return
       let r = this.round
-      alert('第'+r+'轮抽奖结束！')
+      setTimeout(function() {
+        alert('第'+r+'轮抽奖结束！')
+      }, 500)
     }
   }
 }
@@ -193,19 +190,12 @@ export default {
   padding: 0
 body
   font-family: Helvetica, sans-serif;
-.header
-  background: #f1f1f1
-  border-bottom: 1px solid #e5e5e5
-.header-inner
-  width: 960px
-  margin: 0 auto
-  height: 72px
-  background: url("../assets/logo.png") left center no-repeat
 .main
   width: 960px
   margin: 30px auto 0
   overflow: auto
 .lot
+  margin-top: 80px
   width: 533px
   height: 441px
   overflow: hidden
@@ -259,14 +249,15 @@ body
       border: 5px solid #f04c71
 
 .res
-  width: 300px
-  height: 430px
-  padding: 20px
-  float: left
+  width: 320px
+  height: 555px
+  padding: 12px 10px
+  float: right
   border: 20px solid #f04c71
   border-radius: 20px
   overflow: scroll
   margin-left: 40px
+  font-size: 17px
   .res-item
     line-height: 30px
 
