@@ -12,7 +12,7 @@
   </div>
 </template>
 
-<style lang="stylus">
+<style lang="stylus" scoped>
   h1
     color: #444
     margin: 30px 0 10px
@@ -25,8 +25,9 @@
     margin-bottom: 50px
     span
       display: inline-block
-      padding: 3px 13px 3px 0
+      padding: 3px 18px 3px 0
       font-size: 20px
+      width: 68px
 </style>
 
 <script>

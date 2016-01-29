@@ -3,6 +3,7 @@
     <navtop></navtop>
     <div class="main">
       <div class="lot">
+        <h1>荔枝FM2015年会抽奖</h1>
         <div class="lot-wrap">
           <div class="lot-box user" v-el:lotleft>
             <div track-by="$index" v-for="user in allusers" class="lot-item">
@@ -13,8 +14,8 @@
             <div track-by="$index" v-for="gift in allgifts" class="lot-item">
               <div class="lot-item-text" 
                 :class="[
-                  gift.length < 4 ? 'l' : '',
-                  gift.length < 7 && gift.length > 4 ? 'm' : '',
+                  gift.length <= 4 ? 'l' : '',
+                  gift.length <= 7 && gift.length > 4 ? 'm' : '',
                   gift.length > 7 ? 's' : '',
                 ]">{{gift}}</div>
             </div>
@@ -67,7 +68,7 @@ export default {
       res: [],
       ls: ls,
       duration: 300,
-      itemH: 146,
+      itemH: 166,
       total: 0,
       debug: false
     }
@@ -140,12 +141,12 @@ export default {
       Velocity(self.$els.lotleft, {translateY: 0}, {duration: 0})
       Velocity(self.$els.lotright, {translateY: 0}, {duration: 0})
       Velocity(self.$els.lotleft, {
-        translateY: -self.itemH*(self.total)
+        translateY: -33033
       }, {
         duration: self.duration
       })
       Velocity(self.$els.lotright, {
-        translateY: -self.itemH*(self.total) 
+        translateY: - 33033
       }, {
         duration: self.duration + 100,
         complete() {
@@ -159,7 +160,7 @@ export default {
             self.roundEnd = true
             return
           }
-          setTimeout(function() { self.animate() }, 400)
+          setTimeout(function() { self.animate() }, 500)
         }
       })
     },
@@ -176,6 +177,7 @@ export default {
     handleRoundEnd() {
       if (this.round == 0) return
       let r = this.round
+      console.log(this.res)
       setTimeout(function() {
         alert('第'+r+'轮抽奖结束！')
       }, 500)
@@ -189,26 +191,32 @@ export default {
   margin: 0
   padding: 0
 body
-  font-family: Helvetica, sans-serif;
+  font-family: "Microsoft Yahei", Helvetica, Arial, FreeSans, Arimo, "Droid Sans", "wenquanyi micro hei", "Hiragino Sans GB", "Hiragino Sans GB W3", sans-serif
 .main
   width: 960px
   margin: 30px auto 0
   overflow: auto
 .lot
   margin-top: 80px
-  width: 533px
-  height: 441px
-  overflow: hidden
+  width: 630px
+  height: 485px
   background: url("../assets/machine.png") center no-repeat
+  background-size: 100% auto
   position: relative
   float: left
+  h1
+    text-align: center
+    text-indent: -60px
+    font-size: 48px
+    margin-top: -74px
+    color: #333
 
 .lot-wrap
   position: absolute
-  left: 56px
-  top: 154px
-  width: 356px
-  height: 148px
+  left: 66px
+  top: 164px
+  width: 420px
+  height: 175px
   overflow: hidden
   background: #f04c71
 
@@ -219,47 +227,49 @@ body
   right: 0
 
 .lot-box
-  width: 177px
+  width: 210px
   position: absolute
   top: 0
   &:nth-child(1)
-    left: 0
+    left: 4px
   &:nth-child(2)
-    left: 177px
+    left: 208px
   &.gift .lot-item .lot-item-text
     &.s
-      font-size: 28px
+      font-size: 30px
     &.m
-      font-size: 32px
+      font-size: 34px
     &.l
-      font-size: 40px
+      font-size: 44px
   .lot-item
-    width: 177px
+    width: 210px
     text-align: center
-    height: 146px
+    height: 166px
     line-height: 35px
     display: table
     .lot-item-text
       background: #fff
       text-align: center
-      font-size: 40px
+      font-size: 48px
       display: table-cell
       vertical-align: middle
       line-height: 1.3
-      border: 5px solid #f04c71
+      border: 10px solid #f04c71
+      word-break: break-all
 
 .res
-  width: 320px
-  height: 555px
+  width: 240px
+  height: 550px
   padding: 12px 10px
   float: right
-  border: 20px solid #f04c71
+  border: 12px solid #f04c71
   border-radius: 20px
   overflow: scroll
   margin-left: 40px
-  font-size: 17px
+  font-size: 16px
   .res-item
-    line-height: 30px
+    line-height: 20px
+    margin: 10px 0
 
 .btn-group
   button
